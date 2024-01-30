@@ -2,6 +2,9 @@ import { createApp } from "vue";
 
 import "./index.scss";
 
-import Comment from "./Comment";
+import commentStore from './store/comment.js'
 
-createApp(Comment).mount("#app");
+import Comment from "./Comment.vue";
+const app = createApp(Comment)
+app.use(commentStore)
+app.mount("#app");

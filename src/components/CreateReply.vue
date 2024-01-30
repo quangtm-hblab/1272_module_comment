@@ -1,10 +1,21 @@
 <template lang="">
-  <div class="cmt-bg-bgGray cmt-py-6 cmt-px-4 cmt-border-t-[1px] cmt-border-gray-300 cmt-w-full">
-    <div v-show="!isCommenting">
-      <button @click="onCreateComment" class="cmt-border cmt-border-black cmt-bg-bgGray cmt-py-1 cmt-px-4">新規コメント</button>
+  <div>
+    <div v-show="!isCommenting" class="cmt-pl-4 cmt-py-2 cmt-bg-white cmt-rounded-b-lg cmt-cursor-pointer cmt-text-txtGray cmt-flex cmt-items-center" @click="onCreateComment">
+      <div>
+        <flux-icon-button
+        :disabled="false"
+        class="reply-button-icon"
+        icon-id="return"
+        icon-size="16"
+        width="16"
+        circled="false"
+        filled="false"
+      />
+      </div> 
+      <div>返信</div>
     </div>
-
     <div v-show="isCommenting">
+
       <Editor @lose-focus="handleLoseFocus" @input-text="handleInputText" @input-raw="handleInputRaw"/>
       <div class="cmt-flex cmt-justify-end cmt-items-center cmt-px-2 cmt-pt-2">
         <!-- -1 because '\n' value in inputText when clear editor -->
@@ -16,45 +27,46 @@
           width="24"
           height="24"
           icon-id="paperairplane"
-          @click="createComment"
+          @click="createReply"
         />
       </div>
     </div> 
   </div>
 </template>
-<script lang="">
+<script>
 import Editor from './CreateComment/Editor'
 export default {
+  emits:['add-reply'],
   data(){
     return {
-      isCommenting: false,
       inputText: ' ',
-      inputRaw: '',
+      inputRaw: ' ',
+      isCommenting: false,
     }
   },
-  components: {
+  components:{
     Editor
   },
-  methods: {
+  methods:{
     onCreateComment(){
       this.isCommenting = true      
     },
-    createComment(){
-      console.log('created')
-      this.$store.dispatch('addComment', this.inputRaw)
+    handleInputText(inputValue){
+      this.inputText = inputValue
     },
-    handleLoseFocus(data){
+    handleInputRaw(inputRaw){
+      this.inputRaw = inputRaw
+    },
+    handleLoseFocus(){
       this.isCommenting = false
-      console.log(data);
-    }, 
-    handleInputText(text){
-      this.inputText = text
     },
-    handleInputRaw(textHtml){
-      this.inputRaw = textHtml
+    createReply(){
+      this.$emit('add-reply', this.inputRaw)
+      this.isCommenting = false
     }
-  },
+  }
 }
 </script>
-<style lang="scss">
+<style lang="">
+  
 </style>
